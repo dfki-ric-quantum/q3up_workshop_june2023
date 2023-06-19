@@ -13,7 +13,7 @@ def sample_histogram(samples: np.ndarray) -> None:
     Parameters
     ----------
     samples: np.ndarray
-        The measurement results as returned from `qml.sample()`
+        The measurement results as returned from `qml.sample()`.
     """
     n_samples = samples.shape[0]
     n_dim = 1
@@ -42,3 +42,33 @@ def sample_histogram(samples: np.ndarray) -> None:
     ax.set_title("State histogram")
     ax.set_xlabel("State")
     ax.set_ylabel("No. of Samples")
+
+def flatten_list(my_list: np.ndarray) -> np.ndarray:
+    """ Flatten two dimensional arrays.
+    """
+    return [item for sublist in my_list for item in sublist]
+    
+def print_sorted_samples(samples: np.ndarray,
+                         best: int = 5
+                        ) -> np.ndarray:
+    """ Print the most freuently measured states.
+    
+    Parameters
+    ----------
+    samples: np.ndarray
+        The measurement results as returned from `qml.sample()`.
+    best: int = 5
+        Specifies how many of the most freuently measured states are returned.
+    """
+    c_samples = [f"|{''.join(sample)}>" for sample in samples.astype(int).astype(str)]
+    counts = np.unique(c_samples, return_counts=True)
+    positions = np.argsort(-counts[1])
+    
+    states_sorted = counts[0][positions[:best]]
+    counts_sorted = counts[1][positions[:best]]
+    
+    samples_sorted = [states_sorted, counts_sorted]
+    for s, c in zip(states_sorted, counts_sorted):
+        print(s,": ",c)
+        
+    return samples_sorted
